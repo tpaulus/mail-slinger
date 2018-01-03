@@ -1,0 +1,44 @@
+plugins {
+    id 'io.franzbecker.gradle-lombok' version '1.8'
+    id 'java'
+}
+
+group 'com.tompaulus'
+version '1.0'
+
+sourceCompatibility = 1.8
+
+lombok {
+    sha256 = "" // skip verify Lombok task
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Logging
+    compile group: 'log4j', name: 'log4j', version: '1.2.17'
+    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
+
+    // Jtwig
+    compile group: 'org.jtwig', name: 'jtwig-core', version: '5.86.1.RELEASE'
+
+    // CSV Parsing
+    compile group: 'com.opencsv', name: 'opencsv', version: '4.1'
+
+    // Email
+    compile group: 'org.apache.commons', name: 'commons-email', version: '1.5'
+}
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'Gradle Jar File',
+                'Implementation-Version': version,
+                'Main-Class': 'com.tompaulus.Main'
+    }
+    baseName = project.name
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
+    with jar
+}
